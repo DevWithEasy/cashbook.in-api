@@ -1,13 +1,39 @@
-const demoRouter = require('./userRouters')
+const userRouters = require('./userRouters')
+const businessRouter = require('./businessRouters')
+const bookRouter = require('./bookRouters')
+const transectionRouter = require('./transectionsRouters')
+const categoryRouter = require('./categoryRouters')
+const contactRouter = require('./contactRouters')
+const paymentRouter = require('./paymentRouters')
 
 const routers = [
     {
         path : '/api/user',
-        handler : demoRouter
+        handler : userRouters
     },
     {
-        path : '/api/demo',
-        handler : demoRouter
+        path : '/api/business',
+        handler : businessRouter
+    },
+    {
+        path : '/api/book',
+        handler : bookRouter
+    },
+    {
+        path : '/api/transection',
+        handler : transectionRouter
+    },
+    {
+        path : '/api/category',
+        handler : categoryRouter
+    },
+    {
+        path : '/api/contact',
+        handler : contactRouter
+    },
+    {
+        path : '/api/payment',
+        handler : paymentRouter
     },
     {
         path : '/',

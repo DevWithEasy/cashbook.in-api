@@ -1,6 +1,10 @@
 const bcrypt = require('bcrypt')
-const User = require("../model/User")
 const jwt = require('jsonwebtoken')
+const User = require('../models/User')
+const { sendOTPLoginAccout, sendOTPCreateAccout } = require('../utils/verifiaction-Email')
+const Business = require('../models/Business')
+const Book = require('../models/Book')
+const Transection = require('../models/Transection')
 
 exports.sendOTP = async (req, res) => {
     try {
@@ -298,12 +302,12 @@ exports.checking = async (req, res) => {
         const books = await Book.find({ user: id })
 
         const booksWithTotals = await Promise.all(books.map(async (book) => {
-            const cashIn = await Entry.aggregate([
+            const cashIn = await Transection.aggregate([
                 { $match: { book: book._id, entryType: "cash_in" } },
                 { $group: { _id: null, total: { $sum: "$amount" } } }
             ]);
 
-            const cashOut = await Entry.aggregate([
+            const cashOut = await Transection.aggregate([
                 { $match: { book: book._id, entryType: "cash_out" } },
                 { $group: { _id: null, total: { $sum: "$amount" } } }
             ])

@@ -5,9 +5,12 @@ const errorHandler = require("./middleware/errorHandler");
 const applyMidleware = require("./middleware/middlewares");
 const applyRouter = require("./routers/routers");
 const dbConnection = require("./config/dbConnection");
+const cloudinaryConfig = require("./config/cloudinary");
 const app = express();
 
 app.use(express.static(path.join(__dirname,'public')))
+
+cloudinaryConfig()
 
 dbConnection()
 

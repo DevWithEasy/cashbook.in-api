@@ -1,8 +1,6 @@
-const Book = require( "../model/Book")
-const Business = require( "../model/Business")
-const Contact = require( "../model/Contact")
-const Entry = require( "../model/Entry")
-const Payment = require( "../model/Payment")
+const Book = require("../models/Book")
+const Transection = require("../models/Transection")
+const Payment = require("../models/Payment")
 
 exports.createBook = async(req,res)=>{
     try{
@@ -48,12 +46,12 @@ exports.getBooks = async(req,res)=>{
         const books = await Book.find({"business" : req.query.id})
         
         const booksWithTotals = await Promise.all(books.map(async (book) => {
-            const cashIn = await Entry.aggregate([
+            const cashIn = await Transection.aggregate([
                 { $match: { book: book._id, entryType: "cash_in" } },
                 { $group: { _id: null, total: { $sum: "$amount" } } }
             ]);
 
-            const cashOut = await Entry.aggregate([
+            const cashOut = await Transection.aggregate([
                 { $match: { book: book._id, entryType: "cash_out" } },
                 { $group: { _id: null, total: { $sum: "$amount" } } }
             ])
@@ -84,7 +82,7 @@ exports.getBooks = async(req,res)=>{
 exports.getBook = async(req,res)=>{
     try {
         const book = await Book.findOne({"_id" : req.query.id})
-        const entries = await Post.find({book: book._id}).sort({createdAt: -1})
+        const entries = await Transection.find({book: book._id}).sort({createdAt: -1})
         res.status(200).json({
             success : "success",
             status:200,
@@ -132,7 +130,7 @@ exports.deleteBook = async(req,res)=>{
 
         await Payment.deleteMany({"book" : (req.query.id)})
 
-        await Entry.deleteMany({"book" : (req.query.id)})
+        await Transection.deleteMany({"book" : (req.query.id)})
 
         await Book.deleteOne({"_id" : req.query.id})
 
@@ -201,14 +199,29 @@ exports.copyBook=async(req,res)=>{
 
 exports.memberAdd=async(req,res)=>{
     try {
-        console.log(req.query.id,req.body)
+
+        const userRole = {
+            user: req.body.user,
+            role: req.body.role,
+            createdAt : Date.now()
+        }
+
+        await Book.findByIdAndUpdate(req.body.book, {
+            $push: {
+                teams: userRole
+            }
+        })
+
+        const book = await Book.findById(req.body.book)
 
         return res.status(200).json({
             success: true,
             status: 200,
-            data: {},
-            message: "Successfully copied."
+            invite : false, 
+            data : book,
+            message: "Team member added Successfully"
         })
+
     } catch (err) {
         res.status(500).json({
             success: false,

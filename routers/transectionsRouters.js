@@ -1,5 +1,4 @@
-const { demo } = require('../controllers/demoControllers')
-const { createTransection, getTransectionDetails, updateTransection, deleteTransection, getAllTransection, deleteManyTransection, copyTransection, moveTransection, oppositeTransection } = require('../controllers/entryControllers')
+const { createTransection, getTransectionDetails, updateTransection, deleteTransection, getAllTransection, deleteManyTransection, copyTransection, moveTransection, oppositeTransection } = require('../controllers/transectionControllers')
 
 const router = require('express').Router()
 

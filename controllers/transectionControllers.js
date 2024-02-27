@@ -1,5 +1,5 @@
-const Entry =require("../model/Entry") 
-const History= require("../model/History") 
+const Entry =require("../models/Transection") 
+const History= require("../models/History") 
 
 exports.createTransection = async (req, res) => {
     try {

@@ -1,5 +1,5 @@
-import { accountConfirm, checking, invitionAccept, sendOTP, uploadImage, verifyOTP } from '../controllers/userControllers'
-
+const { accountConfirm, checking, invitionAccept, sendOTP, uploadImage, verifyOTP } =require('../controllers/userControllers'
+) 
 const router = require('express').Router()
 
 router.post('/send-otp',sendOTP)
@@ -10,4 +10,4 @@ router.post('/send-otp',sendOTP)
 .put('/upload',uploadImage)
 
 
-export default router
+module.exports = router

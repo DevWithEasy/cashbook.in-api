@@ -1,11 +1,11 @@
-const Book = require( "../model/Book")
-const Business = require( "../model/Business")
-const Category = require( "../model/Category")
-const Contact = require( "../model/Contact")
-const Entry = require( "../model/Entry")
-const History = require( "../model/History")
-const Payment = require( "../model/Payment")
-const User = require( "../model/User")
+const Book = require( "../models/Book")
+const Category = require( "../models/Category")
+const Contact = require( "../models/Contact")
+const Entry = require( "../models/Transection")
+const History = require( "../models/History")
+const Payment = require( "../models/Payment")
+const User = require( "../models/User")
+const Business = require("../models/Business")
 
 exports.getBusiness = async (req, res) => {
     try {

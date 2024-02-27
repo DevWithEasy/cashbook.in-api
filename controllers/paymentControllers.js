@@ -1,4 +1,4 @@
-const Payment =require( "../model/Payment")
+const Payment =require( "../models/Payment")
 
 exports.getPayments=async(req,res)=>{
     try {
