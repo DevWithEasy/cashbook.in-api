@@ -8,12 +8,12 @@ router.post('/',authenticated,createBusiness)
 .get('/',authenticated,getBusiness)
 .put('/:id',authenticated,updateBusiness)
 .delete('/:id',authenticated,deleteBusiness)
-.get('/info',authenticated,getInfo)
-.put('/member-confirm',authenticated,memberConfirm)
-.put('/member-owner-change',authenticated,memberOwnerChange)
-.put('/member-remove',authenticated,memberRemove)
-.put('/member-role-change',authenticated,memberRoleChange)
-.put('/member-verify',authenticated,memberVerify)
+.get('/info/:id',authenticated,getInfo)
+.post('/member-confirm',authenticated,memberConfirm)
+.post('/member-owner-change',authenticated,memberOwnerChange)
+.post('/member-remove',authenticated,memberRemove)
+.post('/member-role-change',authenticated,memberRoleChange)
+.post('/member-verify',authenticated,memberVerify)
 
 
 module.exports = router

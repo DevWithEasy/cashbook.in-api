@@ -76,7 +76,7 @@ exports.createBusiness = async (req, res) => {
 exports.updateBusiness = async (req, res) => {
     try {
 
-        await Business.findByIdAndUpdate(req.query.id, {
+        await Business.findByIdAndUpdate(req.params.id, {
             $set: {
                 name: req.body.name,
                 address: req.body.address,
@@ -88,7 +88,7 @@ exports.updateBusiness = async (req, res) => {
             }
         }
         )
-        const business = await Business.findById(req.query.id)
+        const business = await Business.findById(req.params.id)
             .populate('user')
             .populate({
                 path: 'teams',
@@ -115,7 +115,7 @@ exports.updateBusiness = async (req, res) => {
 
 exports.deleteBusiness = async (req, res) => {
     try {
-        const business =  await Business.findById(req.query.id)
+        const business =  await Business.findById(req.params.id)
 
         await Promise.all(
             business.books.map(async(book)=>{
@@ -137,7 +137,7 @@ exports.deleteBusiness = async (req, res) => {
             })
         )
 
-        await Business.findByIdAndDelete(req.query.id)
+        await Business.findByIdAndDelete(req.params.id)
 
         res.status(200).json({
             success: true,
@@ -157,7 +157,7 @@ exports.deleteBusiness = async (req, res) => {
 exports.getInfo = async (req, res) => {
     try {
 
-        const books = await Book.find({ business: req.query.id })
+        const books = await Book.find({ business: req.params.id })
 
         let entryCount = 0
 
@@ -203,11 +203,21 @@ exports.memberConfirm = async (req, res) => {
                 }
             })
 
+            const business = await Business.findById(req.query.business)
+            .populate('user')
+            .populate({
+                path: 'teams',
+                populate: {
+                    path: 'user',
+                    model: 'User'
+                }
+            })
+
             return res.status(200).json({
                 success: true,
                 status: 200,
                 invite : false,
-                data : {},
+                data : business,
                 message: "Team member added Successfully"
             })
         } else {
@@ -239,7 +249,6 @@ exports.memberConfirm = async (req, res) => {
 
 exports.memberOwnerChange = async (req, res) => {
     try {
-        console.log(req.body)
         await Business.updateOne({
             _id: req.body.b_id,
             'teams._id': req.body.t_id

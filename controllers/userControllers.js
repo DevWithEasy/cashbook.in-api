@@ -280,7 +280,7 @@ exports.invitionAccept = async (req, res) => {
 
 exports.checking = async (req, res) => {
     try {
-        const { id } = (req.query)
+        const { id } = req.user
 
         const user = await User.findOne({ _id: id })
 
