@@ -1,17 +1,18 @@
 const Book = require("../models/Book")
 const Transection = require("../models/Transection")
 const Payment = require("../models/Payment")
+const Business = require("../models/Business")
 
 exports.createBook = async(req,res)=>{
     try{
         const newBook = new Book({
             ...req.body,
             user : req.user.id,
-            business : req.query.id
+            business : req.params.businessId
         })
         const book = await newBook.save()
 
-        await Business.findByIdAndUpdate(req.query.id,{$push : {books : book._id}})
+        await Business.findByIdAndUpdate(req.params.businessId,{$push : {books : book._id}})
 
         const payments = ['Cash','Online']
         payments.forEach(async(payment)=>{
@@ -43,7 +44,7 @@ exports.createBook = async(req,res)=>{
 
 exports.getBooks = async(req,res)=>{
     try {
-        const books = await Book.find({"business" : req.query.id})
+        const books = await Book.find({"business" : req.params.businessId})
         
         const booksWithTotals = await Promise.all(books.map(async (book) => {
             const cashIn = await Transection.aggregate([

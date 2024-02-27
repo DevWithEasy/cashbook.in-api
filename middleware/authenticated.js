@@ -1,7 +1,7 @@
 const jwt = require('jsonwebtoken')
 const authenticated=(req,res,next)=>{
     try {
-        const token = req.headers['cb-access-token'].split(' ')[1]
+        const token = req.headers['cb-access-token']
         jwt.verify(token,process.env.JWT_SECRET,(err,decode)=>{
             if(err){
                 res.status(401).json({

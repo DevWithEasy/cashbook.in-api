@@ -2,7 +2,7 @@ const Category = require ("../models/Category")
 
 exports.getCategories = async(req,res)=>{
     try {
-        const categories = await Category.find({ book: req.query.id })
+        const categories = await Category.find({ book: req.params.bookId })
         res.status(200).json({
             success: true,
             status: 200,
@@ -22,7 +22,7 @@ exports.createCategory = async(req,res)=>{
         const newCategory = new Category({
             name: req.body.name,
             user: req.user.id,
-            book: req.query.id
+            book: req.params.bookId
         })
 
         const category = await newCategory.save()
@@ -44,7 +44,7 @@ exports.createCategory = async(req,res)=>{
 
 exports.updateCategory = async(req,res)=>{
     try {
-        const category = await Category.findByIdAndUpdate(req.query.id, {
+        const category = await Category.findByIdAndUpdate(req.params.bookId, {
             $set: {
                 name : req.body.name,
             }
@@ -69,7 +69,7 @@ exports.updateCategory = async(req,res)=>{
 
 exports.deleteCategory = async(req,res)=>{
     try {
-        await Category.findByIdAndDelete(req.query.id)
+        await Category.findByIdAndDelete(req.params.bookId)
         return res.status(200).json({
             success: true,
             status: 200,

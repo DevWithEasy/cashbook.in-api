@@ -2,7 +2,7 @@ const Payment =require( "../models/Payment")
 
 exports.getPayments=async(req,res)=>{
     try {
-        const payments = await Payment.find({ book: req.query.id })
+        const payments = await Payment.find({ book: req.params.bookId })
         res.status(200).json({
             success: true,
             status: 200,
@@ -22,7 +22,7 @@ exports.createPayment=async(req,res)=>{
         const newPayment = new Payment({
             name: req.body.name,
             user: req.user.id,
-            book: req.query.id
+            book: req.params.bookId
         })
 
         const payment = await newPayment.save()
@@ -44,7 +44,7 @@ exports.createPayment=async(req,res)=>{
 
 exports.updatePayment=async(req,res)=>{
     try {
-        const payment = await Payment.findByIdAndUpdate(req.query.id, {
+        const payment = await Payment.findByIdAndUpdate(req.params.bookId, {
             $set: {
                 name : req.body.name,
             }
@@ -69,7 +69,7 @@ exports.updatePayment=async(req,res)=>{
 
 exports.deletePayment=async(req,res)=>{
     try {
-        await Payment.findByIdAndDelete(req.query.id)
+        await Payment.findByIdAndDelete(req.params.bookId)
         return res.status(200).json({
             success: true,
             status: 200,

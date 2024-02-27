@@ -1,6 +1,10 @@
 const mongoose =require('mongoose')
 
 const historySchema = mongoose.Schema({
+    user:{
+        type:mongoose.Types.ObjectId,
+        ref:'User'
+    },
     entry:{
         type:mongoose.Types.ObjectId,
         ref:'Entry'

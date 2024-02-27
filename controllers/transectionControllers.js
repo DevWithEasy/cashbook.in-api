@@ -1,12 +1,15 @@
-const Entry =require("../models/Transection") 
+const Transection =require("../models/Transection") 
 const History= require("../models/History") 
+const Category = require("../models/Category")
+const Contact = require("../models/Contact")
+const Payment = require("../models/Payment")
 
 exports.createTransection = async (req, res) => {
     try {
 
-        const newEntry = new Entry({
+        const newEntry = new Transection({
             user: req.user.id,
-            book: req.query.id,
+            book: req.params.bookId,
             amount: req.body.amount,
             remark: req.body.remark,
             entryType: req.body.type,
@@ -18,7 +21,7 @@ exports.createTransection = async (req, res) => {
 
         await newEntry.save()
 
-        const entry = await Entry.findById(newEntry._id)
+        const entry = await Transection.findById(newEntry._id)
         .populate('user')
         .populate('payment')
         .populate('category')
@@ -28,8 +31,10 @@ exports.createTransection = async (req, res) => {
             success: true,
             status: 200,
             data: entry,
-            message: "Entry created successfully"
+            message: "Transection created successfully"
         })
+
+        console.log(entry)
     } catch (err) {
         console.log(err)
         res.status(500).json({
@@ -42,13 +47,15 @@ exports.createTransection = async (req, res) => {
 
 exports.getTransectionDetails = async (req, res) => {
     try {
-        const entry = await Entry.findById(req.query.id)
-            .populate('contact','name')
+        const entry = await Transection.findById(req.params.id)
+            .populate('contact','name type')
             .populate('category','name')
             .populate('payment','name')
             .populate('user', 'name')
 
-        const histories = await History.find({ entry: req.query.id })
+        const histories = await History.find({ entry: req.params.id })
+        .populate('user', 'name')
+
         res.status(200).json({
             success: true,
             status: 200,
@@ -56,7 +63,7 @@ exports.getTransectionDetails = async (req, res) => {
                 ...entry._doc,
                 histories
             },
-            message: "Entry updated successfully"
+            message: "Transection updated successfully"
         })
     } catch (err) {
         res.status(500).json({
@@ -69,16 +76,17 @@ exports.getTransectionDetails = async (req, res) => {
 
 exports.updateTransection = async (req, res) => {
     try {
-        const findEntry = await Entry.findOne({ "_id": req.query.id })
+        const findEntry = await Transection.findOne({ "_id": req.params.id })
 
         const newHistory = new History({
-            entry: req.query.id,
+            user : req.user.id,
+            entry: req.params.id,
             from: findEntry.amount,
             to: req.body.amount,
             remark: req.body.reason
         })
 
-        await Entry.findByIdAndUpdate(req.query.id, {
+        await Transection.findByIdAndUpdate(req.params.id, {
             $set: {
                 amount: req.body.amount,
                 entryType: req.body.type,
@@ -93,7 +101,7 @@ exports.updateTransection = async (req, res) => {
 
         await newHistory.save()
 
-        const entry = await Entry.findOne({ "_id": req.query.id })
+        const entry = await Transection.findOne({ "_id": req.params.id })
         .populate('user')
         .populate('payment')
         .populate('category')
@@ -103,7 +111,7 @@ exports.updateTransection = async (req, res) => {
             success: true,
             status: 200,
             data: entry,
-            message: "Entry updated successfully"
+            message: "Transection updated successfully"
         })
     } catch (err) {
         return res.status(500).json({
@@ -116,13 +124,13 @@ exports.updateTransection = async (req, res) => {
 
 exports.deleteTransection = async (req, res) => {
     try {
-        await Entry.deleteOne({ _id: req.query.id })
-        await History.deleteMany({entry : req.query.id})
+        await Transection.deleteOne({ _id: req.params.bookId })
+        await History.deleteMany({entry : req.params.bookId})
 
         res.status(200).json({
             success: true,
             status: 200,
-            message: "Entry deleted successfully"
+            message: "Transection deleted successfully"
         })
     } catch (err) {
         res.status(500).json({
@@ -135,28 +143,32 @@ exports.deleteTransection = async (req, res) => {
 
 exports.getAllTransection = async (req, res) => {
     try{
-        const entries = await Entry.find({"book" : req.query.id}).populate('user')
+        const entries = await Transection.find({"book" : req.params.bookId})        
+        .populate('user')
+        .populate('payment')
+        .populate('category')
+        .populate('contact')
 
-        const data = []
+        // const data = []
 
-        await Promise.all(
-            entries.map(async(entry)=>{
-                const category = await Category.findById(entry._doc.category).select('name')
-                const contact = await Contact.findById(entry._doc.contact).select('name type')
-                const payment = await Payment.findById(entry._doc.payment).select('name')
-                data.push({
-                    ...entry._doc,
-                    contact,
-                    category,
-                    payment
-                })
-            })
-        )
+        // await Promise.all(
+        //     entries.map(async(entry)=>{
+        //         const category = await Category.findById(entry._doc.category).select('name')
+        //         const contact = await Contact.findById(entry._doc.contact).select('name type')
+        //         const payment = await Payment.findById(entry._doc.payment).select('name')
+        //         data.push({
+        //             ...entry._doc,
+        //             contact,
+        //             category,
+        //             payment
+        //         })
+        //     })
+        // )
         
         return res.status(200).json({
             success : true,
             status:200,
-            data : data,
+            data : entries,
             message:"Successfully created"
         })
     }catch(err){
@@ -173,7 +185,7 @@ exports.deleteManyTransection = async (req, res) => {
         await Promise.all(
             req.body.entries.map(async (id) => {
 
-                await Entry.findByIdAndDelete(id)
+                await Transection.findByIdAndDelete(id)
 
                 const findHistories = await History.find({ entry: id })
 
@@ -207,7 +219,7 @@ exports.moveTransection = async (req, res) => {
 
         await Promise.all(
             req.body.entries.map(async (id) => {
-                await Entry.findByIdAndUpdate(id, {
+                await Transection.findByIdAndUpdate(id, {
                     $set: {
                         book: req.query.to
                     }
@@ -235,9 +247,9 @@ exports.copyTransection = async (req, res) => {
         
         await Promise.all(
             req.body.entries.map(async (id) => {
-                const findEntry = await Entry.findById(id)
+                const findEntry = await Transection.findById(id)
 
-                const newEntry = new Entry({
+                const newEntry = new Transection({
                     book: req.query.to,
                     user: req.user.id,
                     amount: findEntry.amount,
@@ -289,9 +301,9 @@ exports.oppositeTransection = async (req, res) => {
         console.log(req.body)
         await Promise.all(
             req.body.entries.map(async (id) => {
-                const findEntry = await Entry.findById(id)
+                const findEntry = await Transection.findById(id)
 
-                const newEntry = new Entry({
+                const newEntry = new Transection({
                     book: req.query.to,
                     user: req.user.id,
                     amount: findEntry.amount,
