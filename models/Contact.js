@@ -1,4 +1,4 @@
-import mongoose from 'mongoose';
+const mongoose =require('mongoose')
 
 const contactSchema = mongoose.Schema({
     name:{
@@ -25,5 +25,5 @@ const contactSchema = mongoose.Schema({
     timestamps:true
 })
 
-const Contact = mongoose.models.Contact || mongoose.model('Contact',contactSchema)
-export default Contact
+const Contact = mongoose.model('Contact',contactSchema)
+module.exports = Contact

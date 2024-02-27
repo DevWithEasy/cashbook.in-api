@@ -1,4 +1,4 @@
-import mongoose from 'mongoose';
+const mongoose =require('mongoose')
 
 const verifySchema = mongoose.Schema({
     email:{
@@ -17,5 +17,5 @@ const verifySchema = mongoose.Schema({
     timestamps:true
 })
 
-const Verification = mongoose.models.Verification || mongoose.model('Verification',verifySchema)
-export default Verification
+const Verification = mongoose.model('Verification',verifySchema)
+module.exports = Verification

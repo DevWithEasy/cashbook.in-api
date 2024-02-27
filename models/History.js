@@ -1,4 +1,4 @@
-import mongoose from 'mongoose';
+const mongoose =require('mongoose')
 
 const historySchema = mongoose.Schema({
     entry:{
@@ -20,5 +20,5 @@ const historySchema = mongoose.Schema({
     timestamps:true
 })
 
-const History = mongoose.models.History || mongoose.model('History',historySchema)
-export default History
+const History = mongoose.model('History',historySchema)
+module.exports = History

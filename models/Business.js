@@ -1,4 +1,4 @@
-import mongoose from 'mongoose';
+const mongoose =require('mongoose')
 
 const businessSchema = mongoose.Schema({
     name: {
@@ -66,5 +66,5 @@ const businessSchema = mongoose.Schema({
     timestamps: true
 })
 
-const Business = mongoose.models.Business || mongoose.model('Business', businessSchema)
-export default Business
+const Business = mongoose.model('Business', businessSchema)
+module.exports = Business

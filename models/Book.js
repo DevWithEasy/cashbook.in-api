@@ -1,4 +1,4 @@
-import mongoose from 'mongoose';
+const mongoose =require('mongoose')
 
 const bookSchema = mongoose.Schema({
     name: {
@@ -36,5 +36,5 @@ const bookSchema = mongoose.Schema({
     timestamps: true
 })
 
-const Book = mongoose.models.Book || mongoose.model('Book', bookSchema)
-export default Book
+const Book = mongoose.model('Book', bookSchema)
+module.exports = Book

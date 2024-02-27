@@ -1,4 +1,4 @@
-import mongoose from 'mongoose';
+const mongoose =require('mongoose')
 
 const paymentSchema = mongoose.Schema({
     name:{
@@ -17,5 +17,5 @@ const paymentSchema = mongoose.Schema({
     timestamps:true
 })
 
-const Payment = mongoose.models.Payment || mongoose.model('Payment',paymentSchema)
-export default Payment
+const Payment = mongoose.model('Payment',paymentSchema)
+module.exports = Payment

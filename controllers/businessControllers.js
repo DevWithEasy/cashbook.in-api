@@ -7,7 +7,7 @@ const History = require( "../model/History")
 const Payment = require( "../model/Payment")
 const User = require( "../model/User")
 
-export const getBusiness = async (req, res) => {
+exports.getBusiness = async (req, res) => {
     try {
         const bussinesses = await Business.find({ user: req.user.id })
             .populate('user')
@@ -38,7 +38,7 @@ export const getBusiness = async (req, res) => {
     }
 }
 
-export const createBusiness = async (req, res) => {
+exports.createBusiness = async (req, res) => {
     try {
         const user = await User.findOne({ _id: req.user.id })
         const newBusiness = new Business({
@@ -73,7 +73,7 @@ export const createBusiness = async (req, res) => {
     }
 }
 
-export const updateBusiness = async (req, res) => {
+exports.updateBusiness = async (req, res) => {
     try {
 
         await Business.findByIdAndUpdate(req.query.id, {
@@ -113,7 +113,7 @@ export const updateBusiness = async (req, res) => {
     }
 }
 
-export const deleteBusiness = async (req, res) => {
+exports.deleteBusiness = async (req, res) => {
     try {
         const business =  await Business.findById(req.query.id)
 
@@ -145,6 +145,231 @@ export const deleteBusiness = async (req, res) => {
             data: {},
             message : 'Successfully Deleted.'
         })
+    } catch (err) {
+        res.status(500).json({
+            success: false,
+            status: 500,
+            message: err.message
+        })
+    }
+}
+
+exports.getInfo = async (req, res) => {
+    try {
+
+        const books = await Book.find({ business: req.query.id })
+
+        let entryCount = 0
+
+        await Promise.all(books.map(async (book) => {
+            const entries = await Entry.find({ book : book._id}).count()
+            entryCount = entryCount + entries
+        }))
+
+        return res.status(200).json({
+            success: true,
+            status: 200,
+            data: {
+                books : books.length,
+                entries : entryCount
+            },
+            message: "Successfully Changed"
+        })
+
+    } catch (err) {
+        res.status(500).json({
+            success: false,
+            status: 500,
+            message: err.message
+        })
+    }
+}
+
+exports.memberConfirm = async (req, res) => {
+    try {
+        const findUser =  await User.findById(req.user.id)
+        const user = await User.findOne({ email: req.query.email })
+
+        if (user) {
+            const userRole = {
+                user: user._id,
+                role: req.query.role,
+                createdAt : Date.now()
+            }
+
+            await Business.findByIdAndUpdate(req.query.business, {
+                $push: {
+                    teams: userRole
+                }
+            })
+
+            return res.status(200).json({
+                success: true,
+                status: 200,
+                invite : false,
+                data : {},
+                message: "Team member added Successfully"
+            })
+        } else {
+            const business = await Business.findById(req.query.business)
+
+            const token = jwt.sign({ business: req.query.business, role: req.query.role }, process.env.JWT_SECRET)
+
+            const url = `http://localhost:3000/invite?token=${token}&email=${req.query.email}&business=${business.name}&name=${findUser?.name}`
+
+            sendInviteAccout(process.env.EMAIL, req.query.email, business.name, url)
+
+            return res.status(200).json({
+                success: true,
+                invite : true,
+                status: 200,
+                data : {},
+                message: "Invitation send Successfully."
+            })
+        }
+
+    } catch (err) {
+        res.status(500).json({
+            success: false,
+            status: 500,
+            message: err.message
+        })
+    }
+}
+
+exports.memberOwnerChange = async (req, res) => {
+    try {
+        console.log(req.body)
+        await Business.updateOne({
+            _id: req.body.b_id,
+            'teams._id': req.body.t_id
+        },
+            {
+                $set: {
+                    'user' : req.body.u_id,
+                    'teams.$.user': req.user.id
+                }
+            }
+        )
+
+        const business = await Business.findById(req.body.b_id)
+            .populate('user')
+            .populate({
+                path: 'teams',
+                populate: {
+                    path: 'user',
+                    model: 'User'
+                }
+            })
+
+        return res.status(200).json({
+            success: true,
+            status: 200,
+            data: business,
+            message: "Successfully Changed"
+        })
+
+    } catch (err) {
+        res.status(500).json({
+            success: false,
+            status: 500,
+            message: err.message
+        })
+    }
+}
+
+exports.memberVerify = async (req, res) => {
+    try {
+        const user = await User.findOne({email : req.query.email})
+        
+        return res.status(200).json({
+            success: true,
+            status: 200,
+            find : user ? true : false,
+            data: user,
+            message: "Successfully Changed"
+        })
+
+    } catch (err) {
+        res.status(500).json({
+            success: false,
+            status: 500,
+            message: err.message
+        })
+    }
+}
+
+exports.memberRoleChange = async (req, res) => {
+    try {
+        
+        await Business.updateOne({
+            _id: req.body.b_id,
+            'teams._id': req.body.t_id
+        },
+            {
+                $set: {
+                    'teams.$.role': req.body.role
+                }
+            }
+        )
+
+        const business = await Business.findById(req.body.b_id)
+            .populate('user')
+            .populate({
+                path: 'teams',
+                populate: {
+                    path: 'user',
+                    model: 'User'
+                }
+            })
+
+        return res.status(200).json({
+            success: true,
+            status: 200,
+            data: business,
+            message: "Successfully Changed"
+        })
+
+    } catch (err) {
+        res.status(500).json({
+            success: false,
+            status: 500,
+            message: err.message
+        })
+    }
+}
+
+exports.memberRemove = async (req, res) => {
+    try {
+        await Business.updateOne({
+            _id: req.body.b_id,
+        },
+            {
+                $pull: {
+                    teams: {
+                        '_id' : req.body.t_id
+                    }
+                }
+            }
+        )
+
+        const business = await Business.findById(req.body.b_id)
+            .populate('user')
+            .populate({
+                path: 'teams',
+                populate: {
+                    path: 'user',
+                    model: 'User'
+                }
+            })
+
+        return res.status(200).json({
+            success: true,
+            status: 200,
+            data: business,
+            message: "Successfully Changed"
+        })
+
     } catch (err) {
         res.status(500).json({
             success: false,

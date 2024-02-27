@@ -1,6 +1,6 @@
 const Payment =require( "../model/Payment")
 
-export const  getPayments=async(req,res)=>{
+exports.getPayments=async(req,res)=>{
     try {
         const payments = await Payment.find({ book: req.query.id })
         res.status(200).json({
@@ -17,7 +17,7 @@ export const  getPayments=async(req,res)=>{
     }
 }
 
-export const  createPayment=async(req,res)=>{
+exports.createPayment=async(req,res)=>{
     try {
         const newPayment = new Payment({
             name: req.body.name,
@@ -42,7 +42,7 @@ export const  createPayment=async(req,res)=>{
     }
 }
 
-export const  updatePayment=async(req,res)=>{
+exports.updatePayment=async(req,res)=>{
     try {
         const payment = await Payment.findByIdAndUpdate(req.query.id, {
             $set: {
@@ -67,7 +67,7 @@ export const  updatePayment=async(req,res)=>{
     }
 }
 
-export const  deletePayment=async(req,res)=>{
+exports.deletePayment=async(req,res)=>{
     try {
         await Payment.findByIdAndDelete(req.query.id)
         return res.status(200).json({

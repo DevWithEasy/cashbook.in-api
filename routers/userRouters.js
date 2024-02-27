@@ -1,12 +1,13 @@
-const { demo } = require('../controllers/demoControllers')
+import { accountConfirm, checking, invitionAccept, sendOTP, uploadImage, verifyOTP } from '../controllers/userControllers'
 
 const router = require('express').Router()
 
-router.post('/send-otp',demo)
-.post('/verify-otp',demo)
-.post('/account-confirm',demo)
-.post('/invitition-accept',demo)
-.get('/checking',demo)
+router.post('/send-otp',sendOTP)
+.post('/verify-otp',verifyOTP)
+.post('/account-confirm',accountConfirm)
+.post('/invitition-accept',invitionAccept)
+.get('/checking',checking)
+.put('/upload',uploadImage)
 
 
-module.exports = router
+export default router

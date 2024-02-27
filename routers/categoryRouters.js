@@ -1,12 +1,11 @@
-const { demo } = require('../controllers/demoControllers')
+const { createCategory, getCategories, updateCategory, deleteCategory } = require('../controllers/categoryControllers')
 
 const router = require('express').Router()
 
-router.post('/',demo)
-.get('/:id',demo)
-.get('/',demo)
-.put('/:id',demo)
-.delete('/:id',demo)
+router.post('/:bookId',createCategory)
+.get('/:bookId',getCategories)
+.put('/:id',updateCategory)
+.delete('/:id',deleteCategory)
 
 
 module.exports = router

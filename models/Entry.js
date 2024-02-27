@@ -1,6 +1,6 @@
-import mongoose from 'mongoose';
+const mongoose =require('mongoose')
 
-const entrySchema = mongoose.Schema({
+const transectionSchema = mongoose.Schema({
     book:{
         type:mongoose.Types.ObjectId,
         ref:"Book",
@@ -42,5 +42,5 @@ const entrySchema = mongoose.Schema({
     timestamps:true
 })
 
-const Entry = mongoose.models.Entry || mongoose.model('Entry',entrySchema)
-export default Entry
+const Transection = mongoose.model('Transection',transectionSchema)
+module.exports = Transection

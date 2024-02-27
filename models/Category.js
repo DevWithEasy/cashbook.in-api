@@ -1,4 +1,4 @@
-import mongoose from 'mongoose';
+const mongoose =require('mongoose')
 
 const categorySchema = mongoose.Schema({
     name:{
@@ -17,5 +17,5 @@ const categorySchema = mongoose.Schema({
     timestamps:true
 })
 
-const Category = mongoose.models.Category || mongoose.model('Category',categorySchema)
-export default Category
+const Category = mongoose.model('Category',categorySchema)
+module.exports = Category

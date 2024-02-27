@@ -1,6 +1,6 @@
 const Contact = require("../model/Contact")
 
-export const getContacts = async (req, res) => {
+exports.getContacts = async (req, res) => {
     try {
         const contacts = await Contact.find({ book: req.query.id })
         res.status(200).json({
@@ -17,7 +17,7 @@ export const getContacts = async (req, res) => {
     }
 }
 
-export const createContact = async (req, res) => {
+exports.createContact = async (req, res) => {
     try {
         const newContact = new Contact({
             name: req.body.name,
@@ -43,7 +43,7 @@ export const createContact = async (req, res) => {
     }
 }
 
-export const updateContact = async (req, res) => {
+exports.updateContact = async (req, res) => {
     try {
 
         const contact = await Contact.findByIdAndUpdate(req.query.id, {
@@ -71,7 +71,7 @@ export const updateContact = async (req, res) => {
     }
 }
 
-export const deleteContact = async (req, res) => {
+exports.deleteContact = async (req, res) => {
     try {
         await Contact.findByIdAndDelete(req.query.id)
         return res.status(200).json({

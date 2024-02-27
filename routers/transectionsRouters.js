@@ -1,16 +1,17 @@
 const { demo } = require('../controllers/demoControllers')
+const { createTransection, getTransectionDetails, updateTransection, deleteTransection, getAllTransection, deleteManyTransection, copyTransection, moveTransection, oppositeTransection } = require('../controllers/entryControllers')
 
 const router = require('express').Router()
 
-router.post('/:bookId',demo)
-.get('/all/:bookId',demo)
-.get('/:id',demo)
-.put('/:id',demo)
-.delete('/:id',demo)
-.delete('/delete-many',demo)
-.put('/copy',demo)
-.put('/move',demo)
-.put('/opposte',demo)
+router.post('/:bookId',createTransection)
+.get('/all/:bookId',getAllTransection)
+.get('/:id',getTransectionDetails)
+.put('/:id',updateTransection)
+.delete('/:id',deleteTransection)
+.delete('/delete-many',deleteManyTransection)
+.put('/copy',copyTransection)
+.put('/move',moveTransection)
+.put('/opposite',oppositeTransection)
 
 
 module.exports = router

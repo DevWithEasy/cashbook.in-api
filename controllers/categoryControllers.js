@@ -1,6 +1,6 @@
 const Category = require ("../model/Category")
 
-export const getCategories = async(req,res)=>{
+exports.getCategories = async(req,res)=>{
     try {
         const categories = await Category.find({ book: req.query.id })
         res.status(200).json({
@@ -17,7 +17,7 @@ export const getCategories = async(req,res)=>{
     }
 }
 
-export const createCategory = async(req,res)=>{
+exports.createCategory = async(req,res)=>{
     try {
         const newCategory = new Category({
             name: req.body.name,
@@ -42,7 +42,7 @@ export const createCategory = async(req,res)=>{
     }
 }
 
-export const updateCategory = async(req,res)=>{
+exports.updateCategory = async(req,res)=>{
     try {
         const category = await Category.findByIdAndUpdate(req.query.id, {
             $set: {
@@ -67,7 +67,7 @@ export const updateCategory = async(req,res)=>{
     }
 }
 
-export const deleteCategory = async(req,res)=>{
+exports.deleteCategory = async(req,res)=>{
     try {
         await Category.findByIdAndDelete(req.query.id)
         return res.status(200).json({
