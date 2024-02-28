@@ -2,6 +2,7 @@ const Book = require("../models/Book")
 const Transection = require("../models/Transection")
 const Payment = require("../models/Payment")
 const Business = require("../models/Business")
+const Contact = require("../models/Contact")
 
 exports.createBook = async (req, res) => {
     try {
@@ -188,7 +189,7 @@ exports.deleteBook = async (req, res) => {
         res.status(500).json({
             success: false,
             status: 500,
-            message: err.message
+            message: error.message
         })
     }
 }
@@ -290,15 +291,15 @@ exports.memberAdd = async (req, res) => {
 exports.memberRemove = async (req, res) => {
     try {
         
-        await Book.findByIdAndUpdate(req.query.b_id, {
+        await Book.findByIdAndUpdate(req.body.book, {
             $pull: {
                 members: {
-                    '_id' : req.query.m_id
+                    '_id' : req.body.member
                 }
             }
         })
 
-        const book = await Book.findById(req.query.b_id)
+        const book = await Book.findById(req.body.book)
             .populate('user')
             .populate({
                 path: 'members',
@@ -324,12 +325,34 @@ exports.memberRemove = async (req, res) => {
 
 exports.memberRoleUpdate = async (req, res) => {
     try {
-        console.log(req.query.id, req.body)
+
+        await Book.updateOne(
+            {
+                _id : req.body.book,
+                'members._id' : req.body.member
+            },
+            {
+                $set : {
+                    'members.$.role' : req.body.role
+                }
+            }
+        )
+
+
+        const book = await Book.findById(req.body.book)
+        .populate('user')
+        .populate({
+            path: 'members',
+            populate: {
+                path: 'user',
+                model: 'User'
+            }
+        })
 
         return res.status(200).json({
             success: true,
             status: 200,
-            data: {},
+            data: book,
             message: "Successfully copied."
         })
     } catch (err) {
