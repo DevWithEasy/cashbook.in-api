@@ -303,6 +303,14 @@ exports.checking = async (req, res) => {
             })
 
         const books = await Book.find({ user: id })
+        .populate('user')
+        .populate({
+            path: 'members',
+            populate: {
+                path: 'user',
+                model: 'User'
+            }
+        })
 
         const booksWithTotals = await Promise.all(books.map(async (book) => {
             const cashIn = await Transection.aggregate([
