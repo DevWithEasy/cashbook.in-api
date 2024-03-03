@@ -9,10 +9,16 @@ const initSocket = (server) => {
 
     io.on('connection', (socket) => {
         socket.on('join_cashbook', data => {
-            console.log(data)
-            socket.join(_id)
+            socket.join(data._id)
         })
-
+        socket.on('update_business',data=>{
+            const {business} = data
+            if(business?.teams.length > 0){
+                business?.teams.forEach(member=>{
+                    socket.to(member.user._id).emit('update_business_client',business)
+                })
+            }
+        })
     })
 }
 
