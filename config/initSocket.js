@@ -6,16 +6,17 @@ const initSocket=(server)=>{
         //     'origin' : process.env.NODE_ENV === 'production' ? 'https://amaderdoctor.vercel.app' : 'http://localhost:3000'
         // }
         cors : {
-            origin : 'http://localhost:3000'
+            origin : 'http://localhost:3000/',
+            methods : ['GET','POST']
         }
     })
 
     io.on('connection',(socket)=>{
         console.log(socket)
-        socket.on('join_chat',data=>{
-            socket.join(data.id)
-            console.log(`join chat ${data.id}`)
-        })
+        // socket.on('join_chat',data=>{
+        //     socket.join(data.id)
+        //     console.log(`join chat ${data.id}`)
+        // })
 
     })
 }
