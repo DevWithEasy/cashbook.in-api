@@ -26,8 +26,14 @@ const initSocket = (server) => {
         })
 
         socket.on('remove_business',data=>{
-            const {_id,b_id} = data
+            const {_id,b_id,business} = data
             socket.to(_id).emit('remove_business_client',{id : b_id})
+            
+            if(business?.teams.length > 0){
+                business?.teams.forEach(member=>{
+                    socket.to(member.user._id).emit('update_business_client',business)
+                })
+            }
         })
     })
 }
