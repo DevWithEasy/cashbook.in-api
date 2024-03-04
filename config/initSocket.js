@@ -19,6 +19,16 @@ const initSocket = (server) => {
                 })
             }
         })
+
+        socket.on('add_business',data=>{
+            const {_id,business} = data
+            socket.to(_id).emit('add_business_client',business)
+        })
+
+        socket.on('remove_business',data=>{
+            const {_id,b_id} = data
+            socket.to(_id).emit('remove_business_client',{id : b_id})
+        })
     })
 }
 

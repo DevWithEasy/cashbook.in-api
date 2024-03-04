@@ -219,6 +219,7 @@ exports.memberConfirm = async (req, res) => {
                 success: true,
                 status: 200,
                 invite : false,
+                member : user._id,
                 data : business,
                 message: "Team member added Successfully"
             })
