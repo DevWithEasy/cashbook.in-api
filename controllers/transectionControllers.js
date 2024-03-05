@@ -6,7 +6,7 @@ const Payment = require("../models/Payment")
 
 exports.createTransection = async (req, res) => {
     try {
-
+        const payments = await Payment.find({book : req.params.bookId, name : 'Cash'})
         const newEntry = new Transection({
             user: req.user.id,
             book: req.params.bookId,
@@ -15,7 +15,7 @@ exports.createTransection = async (req, res) => {
             entryType: req.body.type,
             contact: req.body.contact || null,
             category: req.body.category || null,
-            payment: req.body.payment || null,
+            payment: req.body.payment || payments[0]._id,
             createdAt: req.body.createdAt,
         })
 
