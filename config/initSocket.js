@@ -12,7 +12,10 @@ const initSocket = (server) => {
         socket.on('join_cashbook', data => {
             socket.join(data._id)
         })
+        
         //=============Business==============
+
+        //update business
         socket.on('update_business', data => {
             const { business } = data
             if (business?.teams.length > 0) {
@@ -22,11 +25,13 @@ const initSocket = (server) => {
             }
         })
 
+        //add team member
         socket.on('add_business', data => {
             const { _id, business } = data
             socket.to(_id).emit('add_business_client', business)
         })
 
+        //remove team member
         socket.on('remove_business', data => {
             const { _id, b_id, business } = data
             socket.to(_id).emit('remove_business_client', { id: b_id })
@@ -37,9 +42,12 @@ const initSocket = (server) => {
                 })
             }
         })
+
         //=============Business==============
 
         //=============Book==================
+
+        //update book
         socket.on('update_book',data=>{
             const {book} = data
             if (book?.members.length > 0) {
@@ -48,6 +56,7 @@ const initSocket = (server) => {
                 })
             }
         })
+
         //book member
         socket.on('add_team', data => {
             const { _id, book } = data
@@ -59,6 +68,7 @@ const initSocket = (server) => {
             }
         })
 
+        //remove team member
         socket.on('remove_team', data => {
             const { _id, book } = data
             socket.to(_id).emit('remove_team_client', book)
@@ -68,6 +78,7 @@ const initSocket = (server) => {
                 })
             }
         })
+
         //=============Book=================
     })
 }
