@@ -1,4 +1,5 @@
 const { Server } = require('socket.io')
+const Book = require('../models/Book')
 
 const initSocket = (server) => {
     const io = new Server(server, {
@@ -12,7 +13,7 @@ const initSocket = (server) => {
         socket.on('join_cashbook', data => {
             socket.join(data._id)
         })
-        
+
         //=============Business==============
 
         //update business
@@ -48,8 +49,8 @@ const initSocket = (server) => {
         //=============Book==================
 
         //update book
-        socket.on('update_book',data=>{
-            const {book} = data
+        socket.on('update_book', data => {
+            const { book } = data
             if (book?.members.length > 0) {
                 book?.members.forEach(member => {
                     socket.to(member.user._id).emit('update_book_client', book)
@@ -80,6 +81,48 @@ const initSocket = (server) => {
         })
 
         //=============Book=================
+
+        //===========transection============
+
+        //add transecion
+        socket.on('add_transection', async (id) => {
+            try {
+                const book = await Book.findById(id)
+                book.members.forEach(m => {
+                    socket.to(m.user.toString()).emit('client_add_transection', { book: book._id, business: book.business })
+                })
+            } catch (error) {
+                console.log(error)
+            }
+        })
+
+        //update transecion
+        socket.on('update_transection', async (data) => {
+            const {id,entry} = data
+            try {
+                const book = await Book.findById(id)
+                book.members.forEach(m => {
+                    socket.to(m.user.toString()).emit('client_update_transection', { book: book._id, business: book.business,entry })
+                })
+            } catch (error) {
+                console.log(error)
+            }
+        })
+
+                //update transecion
+                socket.on('delete_transection', async (data) => {
+                    const {id,entry} = data
+                    try {
+                        const book = await Book.findById(id)
+                        book.members.forEach(m => {
+                            socket.to(m.user.toString()).emit('client_delete_transection', { book: book._id, business: book.business,entry })
+                        })
+                    } catch (error) {
+                        console.log(error)
+                    }
+                })
+
+        //===========transection============
     })
 }
 

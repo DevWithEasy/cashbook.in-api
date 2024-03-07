@@ -33,10 +33,7 @@ exports.createTransection = async (req, res) => {
             data: entry,
             message: "Transection created successfully"
         })
-
-        console.log(entry)
     } catch (err) {
-        console.log(err)
         res.status(500).json({
             success: false,
             status: 500,
@@ -124,8 +121,8 @@ exports.updateTransection = async (req, res) => {
 
 exports.deleteTransection = async (req, res) => {
     try {
-        await Transection.deleteOne({ _id: req.params.bookId })
-        await History.deleteMany({entry : req.params.bookId})
+        await Transection.deleteOne({ _id: req.params.id })
+        await History.deleteMany({entry : req.params.id})
 
         res.status(200).json({
             success: true,
