@@ -98,29 +98,42 @@ const initSocket = (server) => {
 
         //update transecion
         socket.on('update_transection', async (data) => {
-            const {id,entry} = data
+            const { id, entry } = data
             try {
                 const book = await Book.findById(id)
                 book.members.forEach(m => {
-                    socket.to(m.user.toString()).emit('client_update_transection', { book: book._id, business: book.business,entry })
+                    socket.to(m.user.toString()).emit('client_update_transection', { book: book._id, business: book.business, entry })
                 })
             } catch (error) {
                 console.log(error)
             }
         })
 
-                //update transecion
-                socket.on('delete_transection', async (data) => {
-                    const {id,entry} = data
-                    try {
-                        const book = await Book.findById(id)
-                        book.members.forEach(m => {
-                            socket.to(m.user.toString()).emit('client_delete_transection', { book: book._id, business: book.business,entry })
-                        })
-                    } catch (error) {
-                        console.log(error)
-                    }
+        //update transecion
+        socket.on('delete_transection', async (data) => {
+            const { id, entry } = data
+            try {
+                const book = await Book.findById(id)
+                book.members.forEach(m => {
+                    socket.to(m.user.toString()).emit('client_delete_transection', { book: book._id, business: book.business, entry })
                 })
+            } catch (error) {
+                console.log(error)
+            }
+        })
+
+        //import transecion
+        socket.on('import_transecion', async (data) => {
+            const { id } = data
+            try {
+                const book = await Book.findById(id)
+                book.members.forEach(m => {
+                    socket.to(m.user.toString()).emit('client_import_transecion', { book: book._id, business: book.business })
+                })
+            } catch (error) {
+                console.log(error)
+            }
+        })
 
         //===========transection============
     })

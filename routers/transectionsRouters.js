@@ -1,4 +1,4 @@
-const { createTransection, getTransectionDetails, updateTransection, deleteTransection, getAllTransection, deleteManyTransection, copyTransection, moveTransection, oppositeTransection } = require('../controllers/transectionControllers')
+const { createTransection, getTransectionDetails, updateTransection, deleteTransection, getAllTransection, deleteManyTransection, copyTransection, moveTransection, oppositeTransection, importTransection } = require('../controllers/transectionControllers')
 const authenticated = require('../middleware/authenticated')
 
 const router = require('express').Router()
@@ -12,6 +12,8 @@ router.post('/:bookId',authenticated,createTransection)
 .put('/copy',authenticated,copyTransection)
 .put('/move',authenticated,moveTransection)
 .put('/opposite',authenticated,oppositeTransection)
+.post('/import/:bookId',authenticated,importTransection)
+
 
 
 module.exports = router
