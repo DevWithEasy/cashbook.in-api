@@ -357,7 +357,6 @@ exports.checking = async (req, res) => {
 
 exports.uploadImage = async (req, res) => {
     try {
-        await initDatabase()
         const user = await User.findOne({ "_id": req.body.id })
         if (user.image.public_id) {
             await cloudinary.uploader.destroy(user.image.public_id)
@@ -377,6 +376,28 @@ exports.uploadImage = async (req, res) => {
             status: 200,
             data: update,
             message: "Profile photo successfully uploaded"
+        })
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            status: 500,
+            message: error.message
+        })
+    }
+}
+
+exports.uploadProfile = async (req, res) => {
+    try {
+        const user = await User.findByIdAndUpdate(req.user.id,{
+            name : req.body.name,
+            email : req.body.email,
+            number : req.body.number
+        })
+        res.status(200).json({
+            success: true,
+            status: 200,
+            data: user,
+            message: "Profile successfully updated."
         })
     } catch (error) {
         res.status(500).json({
