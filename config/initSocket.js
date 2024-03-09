@@ -4,7 +4,7 @@ const Book = require('../models/Book')
 const initSocket = (server) => {
     const io = new Server(server, {
         cors: {
-            origin: 'http://localhost:3000'
+            origin: process.env.NODE_ENV === 'production' ? 'https://cashbook-in.vercel.app/' : 'http://localhost:3000'
         }
     })
 
