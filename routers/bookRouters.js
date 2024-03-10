@@ -7,11 +7,11 @@ router.post('/:businessId',authenticated,createBook)
 .get('/:businessId',authenticated,getBooks)
 .put('/:id',authenticated,updateBook)
 .delete('/:id',authenticated,deleteBook)
-.post('/move',authenticated,moveBook)
-.post('/copy',authenticated,copyBook)
 .post('/member/add',authenticated,memberAdd)
 .post('/member/delete',authenticated,memberRemove)
 .post('/member/update',authenticated,memberRoleUpdate)
+.post('/move/:id',authenticated,moveBook)
+.put('/copy/:id',authenticated,copyBook)
 
 
 
