@@ -196,21 +196,39 @@ exports.deleteBook = async (req, res) => {
 
 exports.moveBook = async (req, res) => {
     try {
-        await Book.findByIdAndUpdate(req.params.id, {
+        const findBook = await Book.findById(req.params.id);
+
+        await Promise.all(findBook.members.map(async (member) => {
+            const findBusiness = await Business.find({
+                $and: [
+                    { _id: req.query.to },
+                    { teams: { $elemMatch: { user: member.user } } }
+                ]
+            })
+
+            if (findBusiness.length === 0) {
+                await Business.findByIdAndUpdate(req.query.to, {
+                    $push: {
+                        teams: {
+                            role: 'Staff',
+                            user: member.user
+                        }
+                    }
+                })
+            }
+        }))
+
+        const book = await Book.findByIdAndUpdate(req.params.id, {
             business: req.query.to
         },
             { new: true }
         )
 
-        const book = await Book.findById(req.params.id)
-            .populate('user')
-            .populate({
-                path: 'members',
-                populate: {
-                    path: 'user',
-                    model: 'User'
-                }
-            })
+        await Business.findByIdAndUpdate(req.query.to, {
+            $pull: {
+                books: req.params.id
+            }
+        })
 
         return res.status(200).json({
             success: true,
@@ -218,14 +236,16 @@ exports.moveBook = async (req, res) => {
             data: book,
             message: "Successfully moved."
         })
+
     } catch (err) {
         res.status(500).json({
             success: false,
             status: 500,
             message: err.message
-        })
+        });
     }
-}
+};
+
 
 exports.copyBook = async (req, res) => {
     try {

@@ -58,6 +58,16 @@ const initSocket = (server) => {
             }
         })
 
+        //update book
+        socket.on('move_book', data => {
+            const { book } = data
+            if (book?.members.length > 0) {
+                book?.members.forEach(member => {
+                    socket.to(member.user._id).emit('move_book_client', book)
+                })
+            }
+        })
+
         //book member
         socket.on('add_team', data => {
             const { _id, book } = data

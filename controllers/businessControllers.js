@@ -115,6 +115,29 @@ exports.updateBusiness = async (req, res) => {
     }
 }
 
+exports.leaveBusiness = async (req, res) => {
+    try {
+
+        await Business.findByIdAndUpdate(req.params.id, {
+            
+        }
+        )
+
+        res.status(200).json({
+            success: "success",
+            status: 200,
+            data: {},
+            message: 'Successfully Updated.'
+        })
+    } catch (err) {
+        res.status(500).json({
+            success: false,
+            status: 500,
+            message: err.message
+        })
+    }
+}
+
 exports.deleteBusiness = async (req, res) => {
     try {
         const business =  await Business.findById(req.params.id)
