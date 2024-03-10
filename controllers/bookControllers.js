@@ -196,13 +196,13 @@ exports.deleteBook = async (req, res) => {
 
 exports.moveBook = async (req, res) => {
     try {
-        await Book.findByIdAndUpdate(req.query.id, {
+        await Book.findByIdAndUpdate(req.params.id, {
             business: req.query.to
         },
             { new: true }
         )
 
-        const book = await Book.findById(req.query.id)
+        const book = await Book.findById(req.params.id)
             .populate('user')
             .populate({
                 path: 'members',
@@ -290,11 +290,11 @@ exports.memberAdd = async (req, res) => {
 
 exports.memberRemove = async (req, res) => {
     try {
-        
+
         await Book.findByIdAndUpdate(req.body.book, {
             $pull: {
                 members: {
-                    '_id' : req.body.member
+                    '_id': req.body.member
                 }
             }
         })
@@ -328,26 +328,26 @@ exports.memberRoleUpdate = async (req, res) => {
 
         await Book.updateOne(
             {
-                _id : req.body.book,
-                'members._id' : req.body.member
+                _id: req.body.book,
+                'members._id': req.body.member
             },
             {
-                $set : {
-                    'members.$.role' : req.body.role
+                $set: {
+                    'members.$.role': req.body.role
                 }
             }
         )
 
 
         const book = await Book.findById(req.body.book)
-        .populate('user')
-        .populate({
-            path: 'members',
-            populate: {
-                path: 'user',
-                model: 'User'
-            }
-        })
+            .populate('user')
+            .populate({
+                path: 'members',
+                populate: {
+                    path: 'user',
+                    model: 'User'
+                }
+            })
 
         return res.status(200).json({
             success: true,
