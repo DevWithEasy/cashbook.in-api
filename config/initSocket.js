@@ -63,7 +63,7 @@ const initSocket = (server) => {
             const { book } = data
             if (book?.members.length > 0) {
                 book?.members.forEach(member => {
-                    socket.to(member.user._id).emit('move_book_client', book)
+                    socket.to(member.user).emit('move_book_client', book)
                 })
             }
         })
