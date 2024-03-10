@@ -109,13 +109,26 @@ const initSocket = (server) => {
             }
         })
 
-        //update transecion
+        //delete transecion
         socket.on('delete_transection', async (data) => {
             const { id, entry } = data
             try {
                 const book = await Book.findById(id)
                 book.members.forEach(m => {
                     socket.to(m.user.toString()).emit('client_delete_transection', { book: book._id, business: book.business, entry })
+                })
+            } catch (error) {
+                console.log(error)
+            }
+        })
+
+        //delete transecion
+        socket.on('delete_many_transection', async (data) => {
+            const { book_id } = data
+            try {
+                const book = await Book.findById(book_id)
+                book.members.forEach(m => {
+                    socket.to(m.user.toString()).emit('client_delete_many_transection', data)
                 })
             } catch (error) {
                 console.log(error)
