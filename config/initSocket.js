@@ -44,6 +44,16 @@ const initSocket = (server) => {
             }
         })
 
+        //leave team member
+        socket.on('business_leave', ({business}) => {
+            if (business?.teams.length > 0) {
+                socket.to(business.user.toString()).emit('business_leave_client', business)
+                business?.teams.forEach(member => {
+                    socket.to(member.user.toString()).emit('business_leave_client', business)
+                })
+            }
+        })
+
         //=============Business==============
 
         //=============Book==================

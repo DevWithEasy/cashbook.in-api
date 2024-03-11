@@ -1,4 +1,4 @@
-const { createBusiness, getBusiness, updateBusiness, deleteBusiness, getInfo, memberConfirm, memberRoleChange, memberRemove, memberOwnerChange, memberVerify } = require('../controllers/businessControllers')
+const { createBusiness, getBusiness, updateBusiness, deleteBusiness, getInfo, memberConfirm, memberRoleChange, memberRemove, memberOwnerChange, memberVerify, leaveBusiness } = require('../controllers/businessControllers')
 const authenticated = require('../middleware/authenticated')
 
 const router = require('express').Router()
@@ -9,6 +9,7 @@ router.post('/',authenticated,createBusiness)
 .put('/:id',authenticated,updateBusiness)
 .delete('/:id',authenticated,deleteBusiness)
 .get('/info/:id',authenticated,getInfo)
+.put('/leave/:id/:user',authenticated,leaveBusiness)
 .post('/member-confirm',authenticated,memberConfirm)
 .post('/member-owner-change',authenticated,memberOwnerChange)
 .post('/member-remove',authenticated,memberRemove)

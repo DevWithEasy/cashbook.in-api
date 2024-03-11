@@ -118,16 +118,49 @@ exports.updateBusiness = async (req, res) => {
 exports.leaveBusiness = async (req, res) => {
     try {
 
-        await Business.findByIdAndUpdate(req.params.id, {
-            
+        const bi_update = Business.updateOne({
+            _id : req.params.id,
+            teams : {
+                $elemMatch : {
+                    user : req.params.user
+                }
+            }
+        },
+        {
+            $pull : {
+                teams : {
+                    user : req.params.user
+                }
+            }
         }
         )
+        
+        const bo_update = Book.updateOne({
+            business : req.params.id,
+            members : {
+                $elemMatch : {
+                    user : req.params.user
+                }
+            }
+        },
+        {
+            $pull : {
+                members : {
+                    user : req.params.user
+                }
+            }
+        }
+        )
+
+        Promise.all([bi_update,bo_update])
+
+        const business = await Business.findById(req.params.id)
 
         res.status(200).json({
             success: "success",
             status: 200,
-            data: {},
-            message: 'Successfully Updated.'
+            data: business,
+            message: 'Successfully Leaved.'
         })
     } catch (err) {
         res.status(500).json({

@@ -254,17 +254,13 @@ exports.copyBook = async (req, res) => {
 
         const findbook = Book.findById(req.params.id)
 
-        const findEntries = Transection.find({book : req.params.id})
-
         const findCategories = Category.find({book : req.params.id})
 
         const findPayments = Payment.find({book : req.params.id})
 
         const findContacts = Contact.find({book : req.params.id})
 
-        const [book,entries,categories,payments,contacts] = await Promise.all([findbook,findEntries,findCategories,findPayments,findContacts])
-
-        console.log(book,entries, req.body)
+        const [book,categories,payments,contacts] = await Promise.all([findbook,findCategories,findPayments,findContacts])
 
         const newBook = new Book({
             name : name,
@@ -340,10 +336,28 @@ exports.copyBook = async (req, res) => {
             }
         })
 
+        const cashInfind = Transection.aggregate([
+            { $match: { book: saveBook._id, entryType: "cash_in" } },
+            { $group: { _id: null, total: { $sum: "$amount" } } }
+        ]);
+
+        const cashOutfind = Transection.aggregate([
+            { $match: { book: saveBook._id, entryType: "cash_out" } },
+            { $group: { _id: null, total: { $sum: "$amount" } } }
+        ])
+
+        const [cashIn,cashOut] = await Promise.all([cashInfind,cashOutfind])
+
+        const totalCashIn = cashIn.length > 0 ? cashIn[0].total : 0
+        const totalCashOut = cashOut.length > 0 ? cashOut[0].total : 0
+
         return res.status(200).json({
             success: true,
             status: 200,
-            data: finalBook,
+            data: {
+                ...finalBook._doc,
+                stock: totalCashIn - totalCashOut
+            },
             message: "Successfully copied."
         })
     } catch (err) {
